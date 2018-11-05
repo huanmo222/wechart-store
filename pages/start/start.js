@@ -13,14 +13,25 @@ Page({
   },
 
   /**
-   * 生命周期函数--监听页面加载
+   * 生命周期函数--监听页面加载, 只触发了一次, app.js请求的数据可能还未返回, 此处变获取不到, 需要做回调.
    */
   onLoad: function (options) {
+    console.log('star--onLoad')
     console.log(wx.getStorageSync('mallName'))
+    let mallName = wx.getStorageSync('mallName');
     // 设置首页标题名
-    wx.setNavigationBarTitle({
-      title: wx.getStorageSync('mallName')
-    })
+    if (mallName) {
+      wx.setNavigationBarTitle({
+        title: wx.getStorageSync('mallName')
+      })
+    } else {
+      // 如果商店名称还不存在, 则设置一个回调函数, 使缓存本地成功后重新调用.
+      app.getMallNameCallback = () => {
+        wx.setNavigationBarTitle({
+          title: wx.getStorageSync('mallName')
+        })
+      }
+    }
   },
 
   /**
