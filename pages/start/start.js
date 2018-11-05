@@ -8,6 +8,7 @@ Page({
   data: {
     // remind: '加载中'
     remind: '',
+    angle: 0,
     userInfo: {}
   },
 
@@ -15,14 +16,11 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    console.log(app.globalData.userInfo)
-    if (app.globalData.userInfo) {
-      this.setData({
-        userInfo: app.globalData.userInfo
-      })
-    } else {
-      
-    }
+    console.log(wx.getStorageSync('mallName'))
+    // 设置首页标题名
+    wx.setNavigationBarTitle({
+      title: wx.getStorageSync('mallName')
+    })
   },
 
   /**
@@ -36,7 +34,19 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-    
+    // 获取本地头像信息
+    let self = this;
+    let userInfo = wx.getStorageSync('userInfo');
+    console.log(userInfo)
+    if (!userInfo) {
+      wx.navigateTo({
+        url: '/pages/authorize/authorize',
+      })
+    } else {
+      self.setData({
+        userInfo
+      })
+    }
   },
 
   /**
@@ -72,5 +82,13 @@ Page({
    */
   onShareAppMessage: function () {
   
+  },
+
+  goToIndex: function () {
+    // 跳转到 tabBar 页面，并关闭其他所有非 tabBar 页面
+    wx.switchTab({
+      url: '/pages/index/index',
+    });
   }
+
 })
