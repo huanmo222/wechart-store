@@ -62,6 +62,7 @@ Page({
       }
     })
     _this.getNotice();
+    _this.getCoupons();
   },
   // 获取货物列表, categoryId:类型, append: 是否goods列表已经存在数据?
   // FIXME: 类型可以不用传的, 是this.data.activeCategoryId.
@@ -122,7 +123,22 @@ Page({
       }
     })
   },
-
+  // 获取优惠券
+  getCoupons() {
+    var _this = this;
+    wx.request({
+      url: 'https://api.it120.cc/' + app.globalData.subDomain + '/discounts/coupons',
+      data: { type: '' },
+      success: function (res) {
+        if (res.data.code == 0) {
+          console.log(res)
+          _this.setData({
+            coupons: res.data.data
+          })
+        }
+      }
+    })
+  },
   // 点击轮播图图片
   tapBanner(e) {
     console.log(e.currentTarget.dataset.id);
@@ -139,6 +155,73 @@ Page({
     this.setData({
       activeCategoryId: e.currentTarget.id,
       curPage: 1
+    })
+  },
+  toDetailsTap () {
+
+  },
+  gitCoupon (e) {
+    console.log(e.currentTarget.id)
+    let _this = this;
+    wx.request({
+      url: 'https://api.it120.cc/' + app.globalData.subDomain + '/discounts/fetch',
+      data: {
+        id: e.currentTarget.id,
+        token: wx.getStorageSync('token')
+      },
+      success: function (res) {
+        if (res.data.code == 20001 || res.data.code == 20002) {
+          wx.showModal({
+            title: '错误',
+            content: '小主, 您来晚了',
+            showCancel: false,
+            confirmColor: '#69C3AA'
+          })
+          return
+        }
+        if (res.data.code == 20003) {
+          wx.showModal({
+            title: '错误',
+            content: '您已经领过了哦~',
+            showCancel: false,
+            confirmColor: '#69C3AA'
+          })
+          return
+        }
+        if (res.data.code == 30001) {
+          wx.showModal({
+            title: '错误',
+            content: '您的积分不足',
+            showCancel: false,
+            confirmColor: '#69C3AA'
+          })
+          return;
+        }
+        if (res.data.code == 20004) {
+          wx.showModal({
+            title: '错误',
+            content: '已过期~',
+            showCancel: false,
+            confirmColor: '#69C3AA'
+          })
+          return;
+        }
+        if (res.data.code == 0) {
+          wx.showToast({
+            title: '领取成功，赶紧去下单吧~',
+            icon: 'success',
+            duration: 2000,
+            confirmColor: '#69C3AA'
+          })
+        } else {
+          wx.showModal({
+            title: '错误',
+            content: res.data.msg,
+            showCancel: false,
+            confirmColor: '#69C3AA'
+          })
+        }
+      }
     })
   }
 
