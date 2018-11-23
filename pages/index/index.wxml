@@ -1,16 +1,57 @@
 <!--index.wxml-->
 <view class="container">
   <view class='swiper-container'>
+    <!-- 首页轮播图 -->
     <swiper
+      class="swiper_box" 
       indicator-dots="{{indicatorDots}}"
+      indicator-color="rgba(0, 0, 0, 0.1)"
+      indicator-active-color="#fff"
       autoplay="{{autoplay}}"
       interval="{{interval}}"
       duration="{{duration}}">
-      <block wx:for="{{imgUrls}}">
+      <block wx:for="{{banners}}" wx:key="index">
         <swiper-item>
-          <image src="{{item}}" class="slide-image" width="355" height="150"/>
+          <image
+            bindtap="tapBanner"
+            data-id="{{item.businessId}}"
+            src="{{item.picUrl}}"
+            class="slide-image"/>
         </swiper-item>
       </block>
     </swiper>
   </view>
+  
+  <!-- 分类tab -->
+  <view class="type-container">
+    <scroll-view class="type-navbar" scroll-x style="width: 100%">
+      <view
+        wx:for="{{categories}}"
+        wx:key="{{item.id}}"
+        class="type-box"
+        id="{{item.id}}"
+        bindtap="tabClick">
+        <view class="type-navbar-item {{activeCategoryId==item.id? 'type-item-on' : ''}}">{{item.name}}</view>
+      </view>
+    </scroll-view>
+  </view>
+  
+  <!-- 公告轮播图 -->
+  <view class='notice' wx:if="{{noticeList}}">
+    <view class='notice_iteml'>公告：</view>
+    <swiper
+      vertical
+      circular
+      class="notice_swiper" 
+      autoplay
+      interval="3000"
+      duration="1000">
+        <navigator wx:for="{{noticeList}}" wx:key="index" url='/pages/notice/notice?id={{item.id}}'>
+          <swiper-item>
+            <view class='notice_itemer'>{{item.title}}</view>
+          </swiper-item>
+        </navigator>
+    </swiper>
+  </view>
+
 </view>
