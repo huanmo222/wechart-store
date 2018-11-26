@@ -15,8 +15,9 @@ Page({
     pageSize: 20, // 每次请求多少
     searchInput: '', // 搜索框内容
     goods: [],  // 商品列表
-    loadingMoreHidden: true // 加载更多
-
+    loadingMoreHidden: true, // 隐藏底部加载更多
+    scrollTop: 0,
+    background: ''
 
   },
   onLoad: function () {
@@ -63,6 +64,7 @@ Page({
     })
     _this.getNotice();
     _this.getCoupons();
+    _this.getGoodsList(0);
   },
   // 获取货物列表, categoryId:类型, append: 是否goods列表已经存在数据?
   // FIXME: 类型可以不用传的, 是this.data.activeCategoryId.
@@ -72,9 +74,10 @@ Page({
       categoryId = ''
     }
     let _this = this;
-    wx.showLoading({
-      mask: true,
-    });
+    // wx.showLoading({
+    //   mask: true,
+    // });
+    // console.log({ curPage: _this.data.curPage})
     wx.request({
       url: 'https://api.it120.cc/' + app.globalData.subDomain + '/shop/goods/list',
       data: {
@@ -85,13 +88,15 @@ Page({
       },
       success: function(res) {
         wx.hideLoading();
-        // 没有请求到数据, 显示loadingMore? 
+        // console.log({res})
+        // 没有请求到新的数据, 显示loadingMore(没有数据了)? 
         if (res.data.code == 404 || res.data.code == 700) {
           let newData = { loadingMoreHidden: false };
           if (!append) {
             newData.goods = [];
           }
-          _this.setData({newData})
+          // 注意此处写法, setData(newData)是直接将data中的goods和loadingMoreHidden覆盖掉了.
+          _this.setData(newData)
           return
         }
         let goods = [];
@@ -103,6 +108,7 @@ Page({
           loadingMoreHidden: true,
           goods: goods,
         });
+        // console.log({goods})
       }
     })
   },
@@ -115,7 +121,7 @@ Page({
       data: { pageSize: 5 },
       success: function (res) {
         if (res.data.code == 0) {
-          console.log({ noticeList: res.data.data.dataList})
+          // console.log({ noticeList: res.data.data.dataList})
           _this.setData({
             noticeList: res.data.data.dataList
           })
@@ -131,7 +137,7 @@ Page({
       data: { type: '' },
       success: function (res) {
         if (res.data.code == 0) {
-          console.log(res)
+          // console.log(res)
           _this.setData({
             coupons: res.data.data
           })
@@ -141,10 +147,10 @@ Page({
   },
   // 点击轮播图图片
   tapBanner(e) {
-    console.log(e.currentTarget.dataset.id);
+    // console.log(e.currentTarget.dataset.id);
     if (e.currentTarget.dataset.id != 0) {
       wx.navigateTo({
-        url: '/pages/goods-details/index?id=' + e.currentTarget.dataset.id,
+        url: '/pages/goods-details/goods-details?id=' + e.currentTarget.dataset.id,
       })
     }
   },
@@ -156,12 +162,17 @@ Page({
       activeCategoryId: e.currentTarget.id,
       curPage: 1
     })
+    this.getGoodsList(this.data.activeCategoryId)
   },
-  toDetailsTap () {
+  toDetailsTap (e) {
+    let _this = this;
+    wx.navigateTo({
+      url: "/pages/goods-details/goods-details?id=" + e.currentTarget.id,
+    })
 
   },
   gitCoupon (e) {
-    console.log(e.currentTarget.id)
+    // console.log(e.currentTarget.id)
     let _this = this;
     wx.request({
       url: 'https://api.it120.cc/' + app.globalData.subDomain + '/discounts/fetch',
@@ -223,6 +234,39 @@ Page({
         }
       }
     })
+  },
+  onReachBottom() {
+    console.log(this.data.curPage)
+    // (优化方向)返回一个total, 判断是否已经得到全部数据, 如果得到就不要再请求了.
+    this.setData({
+      curPage: this.data.curPage + 1
+    });
+    this.getGoodsList(this.data.activeCategoryId, true)
+  },
+  onPullDownRefresh: function () {
+    this.setData({
+      curPage: 1
+    });
+    this.getGoodsList(this.data.activeCategoryId)
+  },
+  onPageScroll (e) {
+    // console.log(e.scrollTop)
+    this.setData({
+      scrollTop: e.scrollTop
+    })
+    // this.setData({
+    //   background: 'rgba(105,195,170,' + (Math.round(0.035 * e.scrollTop * 10) / 10+ 0.3) + ')'
+    // })
+  },
+  toSearch (e) {
+    this.setData({
+      curPage: 1
+    })
+    this.getGoodsList(this.data.activeCategoryId);
+  },
+  listenerSearchInput (e) {
+    this.setData({
+      searchInput: e.detail.value
+    })
   }
-
 })
