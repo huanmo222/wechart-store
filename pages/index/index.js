@@ -74,9 +74,9 @@ Page({
       categoryId = ''
     }
     let _this = this;
-    // wx.showLoading({
-    //   mask: true,
-    // });
+    wx.showLoading({
+      mask: true,
+    });
     // console.log({ curPage: _this.data.curPage})
     wx.request({
       url: 'https://api.it120.cc/' + app.globalData.subDomain + '/shop/goods/list',

@@ -220,16 +220,20 @@ swiper-item image {
   margin-right: 20rpx;
 }
 .search-input {
-  width: 436rpx;
+  /* width: 436rpx; */
+  flex: 1;
   font-size: 28rpx;
 }
 .search-button {
   width: 150rpx;
   height: 70rpx;
   font-size: 28rpx;
-  box-sizing: border-box;
+  /* box-sizing: border-box; */
   border-radius: 0px 10rpx 10rpx 0;
   background: rgb(194, 164, 221);
   border: none;
   color: #fff;
+}
+.search-button::after {
+  border: none
 }
