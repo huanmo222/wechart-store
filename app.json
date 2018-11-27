@@ -6,8 +6,8 @@
     "pages/logs/logs",
     "pages/shop-cart/shop-cart",
     "pages/my/my",
-    "pages/notice/notice",
-    "pages/goods-details/goods-details"
+    "pages/goods-details/goods-details",
+    "pages/notice/notice"
   ],
   "window": {
     "backgroundTextStyle": "light",

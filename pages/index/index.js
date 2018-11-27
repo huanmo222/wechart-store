@@ -164,10 +164,13 @@ Page({
     })
     this.getGoodsList(this.data.activeCategoryId)
   },
+  // 点击商品图片, 跳到详情页面
   toDetailsTap (e) {
     let _this = this;
+    console.log(e)
+    console.log(e.currentTarget.id)
     wx.navigateTo({
-      url: "/pages/goods-details/goods-details?id=" + e.currentTarget.id,
+      url: "/pages/goods-details/goods-details?id=" + e.currentTarget.dataset.id,
     })
 
   },

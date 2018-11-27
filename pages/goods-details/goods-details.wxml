@@ -1,2 +1,95 @@
 <!--pages/goods-details/goods-details.wxml-->
-<text>pages/goods-details/goods-details.wxml</text>
+<view class='goods-detail'>
+  <!-- 商品展示轮播图 -->
+  <!-- 当商品展示没有视频时 -->
+  <view class='swiper-container' wx:if="{{!goodsDetail.basicInfo.videoId}}">
+    <swiper
+      class="swiper_box" 
+      indicator-dots="{{indicatorDots}}"
+      indicator-color="rgba(0, 0, 0, 0.1)"
+      indicator-active-color="#fff"
+      autoplay="{{autoplay}}"
+      interval="{{interval}}"
+      duration="{{duration}}">
+      <block wx:for="{{goodsDetail.pics}}" wx:key="index">
+        <swiper-item>
+          <image
+            bindtap="tapBanner"
+            data-id="{{item.id}}"
+            src="{{item.pic}}"
+            class="slide-image"
+            lazy-load/>
+        </swiper-item>
+      </block>
+    </swiper>
+  </view>
+
+  <!-- 当有视频时 -->
+  <view class="swiper-container" wx:if="{{goodsDetail.basicInfo.videoId}}">
+    <video src="{{videoMp4Src}}" autoplay loop style='width:100%'></video>
+  </view>
+  <!-- 分享有赏描述 -->
+  <view class="goods-info">
+    <view class="goods-title">{{goodsDetail.basicInfo.name}}</view>
+    <view
+      class="goods-share"
+      wx:if="{{goodsDetail.basicInfo.commissionType == 1}}">
+      分享有赏，好友下单后可得 {{goodsDetail.basicInfo.commission}} 积分奖励
+    </view>
+    <view
+      class="goods-share"
+      wx:if="{{goodsDetail.basicInfo.commissionType == 2}}">
+      分享有赏，好友下单后可得 {{goodsDetail.basicInfo.commission}}元 现金奖励
+    </view>
+    <!-- 价格 -->
+    <view class='goods-price-wrapper'>
+      <view class="goods-price">¥ 
+        <text style='font-size:40rpx;font-weight:bold'>{{selectSizePrice}}</text>
+      </view>
+      <view class="goods-price" style="color:#999;font-size:24rpx;">
+        购买{{goodsDetail.basicInfo.numberOrders}}次
+      </view>
+      <view class="goods-price" style="color:#999;font-size:24rpx;">
+        共收到 {{goodsDetail.basicInfo.numberGoodReputation}} 次好评
+      </view>
+    </view>
+    <view class="goods-info-fx">
+      <image src='../../images/qd.png' />
+      <button open-type="share">分享</button>
+      <text>分享有赏</text>
+    </view>
+  </view>
+
+  <!-- 砍价 -->
+  <view wx:if="{{curGoodsKanjia}}" class="row-arrow" bindtap="goKanjia">
+    邀请好友帮忙砍价 ( <text style='color:red'>底价 {{curGoodsKanjia.minPrice}} 元</text> )
+  </view>
+
+  <!-- 拼团 -->
+  <view class="goods-des-info" style="margin-top:35rpx;" wx:if="{{pingtuanList}}">
+    <view class="label-title" style="border-bottom:1px solid #eee;">
+      {{pingtuanList.length}}人在拼单，可直接参与
+    </view>
+    <view
+      class="goods-text"
+      style="margin-top:15rpx;border-bottom:1px solid #eee;"
+      wx:for="{{pingtuanList}}"
+      wx:key="id">
+      <view style="width:150rpx;float:left;">
+        <image style="width: 150rpx; height: 150rpx;" src="{{item.apiExtUser.avatarUrl}}"></image>
+        <view style="width:150rpx;text-align:center;">{{item.apiExtUser.nick}}</view>
+      </view>
+      <view style="width:500rpx;float:left;margin-left:35rpx;">
+        <view>已有<text style="color:red"> {{item.helpNumber}} </text>人参与</view>
+        <view style="color: #B0B0B0;font-size:24rpx;">截止: {{item.dateEnd}}</view>
+        <button
+          type="warn"
+          size="mini"
+          data-pingtuanopenid="{{item.id}}"
+          bindtap="joinPingtuan">去拼单
+        </button>
+      </view>
+    </view>
+  </view>
+
+</view>

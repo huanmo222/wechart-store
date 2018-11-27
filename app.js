@@ -55,11 +55,12 @@ App({
       url: 'https://api.it120.cc/' + self.globalData.subDomain + '/shop/goods/kanjia/list',
       data: {},
       success: function (res) {
+        // console.log({"砍价: ":res})
         if (res.data.code == 0) {
-          console.log({ res })
+          // console.log({ res })
           self.globalData.kanjiaList = res.data.data.result;
           if (self.getKanJiaListCallback) {
-            self.getKanJiaListCallback();
+            self.getKanJiaListCallback(); 
           }
         }
       }
