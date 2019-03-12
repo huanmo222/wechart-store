@@ -23,7 +23,7 @@ swiper-item image {
 /* 商品信息 */
 .goods-info {
   background: #fff;
-  padding: 24rpx;
+  padding: 35rpx 24rpx;
   position: relative;
 }
 .goods-info .goods-title {
